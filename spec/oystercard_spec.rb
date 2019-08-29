@@ -10,7 +10,7 @@ describe Oystercard do
 
   describe '#default_behaviour' do
     it 'checks if the hash is empty by default' do
-    expect(subject.journey).to eq({})
+    expect(subject.journeys).to eq([])
     end
     end
 
@@ -45,7 +45,7 @@ describe Oystercard do
     end
     it 'stores the journey in a hash' do
     subject.touch_out(station2)
-    expect(subject.journey).to eq({station => station2})
+    expect(subject.journeys).to eq([{entry_station: station , exit_station: station2}])
     end
 
     it "accepts the entry station" do
@@ -63,4 +63,20 @@ describe Oystercard do
       expect(subject.in_journey?).to be false
     end
   end
+
+  describe 'checks if the balsnce is changed by the amount' do
+    it 'should check the chamge' do
+      subject.top_up(50)
+      subject.touch_in(station)
+      expect{subject.touch_out(station2)}.to change{subject.balance}.by -1
+  end
 end
+
+  describe 'deducts 6 if there is no entry' do
+    it 'deducts 6 form balance' do
+      subject.top_up(50)
+      expect{subject.touch_out(station)}.to change{subject.balance}.by -6
+    end
+  end
+
+  end
